@@ -9,22 +9,20 @@
 
 use std::num::ParseIntError;
 
-fn main() {
+fn main() -> Result<(), ParseIntError> {
     let mut tokens = 100;
     let pretend_user_input = "8";
 
-    let cost = total_cost(pretend_user_input);
-
-    if let Ok(cost) = cost {
-        if cost > tokens {
-            println!("You can't afford that many!");
-        } else {
-            tokens -= cost;
-            println!("You now have {} tokens.", tokens);
-        }
+    let cost = total_cost(pretend_user_input)?;
+    
+    if cost > tokens {
+        println!("You can't afford that many!");
     } else {
-        println!("That's not a valid number of items!");
+        tokens -= cost;
+        println!("You now have {} tokens.", tokens);
     }
+
+    Ok(())
 }
 
 pub fn total_cost(item_quantity: &str) -> Result<i32, ParseIntError> {
