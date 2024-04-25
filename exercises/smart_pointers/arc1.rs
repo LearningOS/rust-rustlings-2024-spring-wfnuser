@@ -21,22 +21,30 @@
 //
 // Execute `rustlings hint arc1` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
-
 #![forbid(unused_imports)] // Do not change this, (or the next) line.
 use std::sync::Arc;
 use std::thread;
 
 fn main() {
     let numbers: Vec<_> = (0..100u32).collect();
-    let shared_numbers = // TODO
+    // initial binding for shared_numbers
+    let shared_numbers = Arc::new(numbers);
     let mut joinhandles = Vec::new();
 
     for offset in 0..8 {
-        let child_numbers = // TODO
-        joinhandles.push(thread::spawn(move || {
-            let sum: u32 = child_numbers.iter().filter(|&&n| n % 8 == offset).sum();
-            println!("Sum of offset {} is {}", offset, sum);
+        let child_numbers = Arc::clone(&shared_numbers);
+        // fix next line
+        // joinhandles.push(thread::spawn(move || {
+        // joinhandles.push(thread::spawn({
+        //     // the following is wrong, fix it
+        //     // let sum: u32 = child_numbers.iter().filter(|&&n| n % 8 == offset).sum();
+        //     let sum: u32 = shared_numbers.iter().filter(|&&n| n % 8 == offset).sum();
+        //     println!("Sum of offset {} is {}", offset, sum);
+        // }));
+        joinhandles.push(thread::spawn({move || {
+                let sum: u32 = child_numbers.iter().filter(|&&n| n % 8 == offset).sum();
+                println!("Sum of offset {} is {}", offset, sum);
+            }
         }));
     }
     for handle in joinhandles.into_iter() {
